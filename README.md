@@ -2,7 +2,7 @@
 
 A reactive word generator using spring boot & spring web flux. Build after being inspired by Spring One.
 
-This takes the [thing explainer](https://xkcd.com/thing-explainer/) [list of words]() and generated a random word from the list every one second.
+This takes the [thing explainer](https://xkcd.com/thing-explainer/) [list of words](https://github.com/RichardBleek/wordgen/blob/master/wordgen/src/main/resources/thing-explainer-words-list.txt) and generated a random word from the list every one second.
 
 ### commands
 terminal 1
