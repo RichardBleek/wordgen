@@ -16,8 +16,4 @@ class Word {
     private String id;
 
     private String word;
-
-    public Word(String word) {
-        this.word = word;
-    }
 }

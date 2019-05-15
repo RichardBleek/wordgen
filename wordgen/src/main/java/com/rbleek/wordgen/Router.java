@@ -16,6 +16,8 @@ public class Router {
                 .andRoute(RequestPredicates.GET("/words/one"),
                         serverRequest -> ServerResponse.ok().body(service.one(), Word.class))
                 .andRoute(RequestPredicates.GET("/words/generate"),
-                        serverRequest -> ServerResponse.ok().contentType(MediaType.TEXT_EVENT_STREAM).body(service.stream(), Word.class));
+                        serverRequest -> ServerResponse.ok()
+                                .contentType(MediaType.TEXT_EVENT_STREAM)
+                                .body(service.stream(), Word.class));
     }
 }
