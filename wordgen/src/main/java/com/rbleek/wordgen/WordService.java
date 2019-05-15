@@ -1,5 +1,6 @@
 package com.rbleek.wordgen;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -7,6 +8,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.SynchronousSink;
 import reactor.util.function.Tuple2;
 
 import java.io.BufferedReader;
@@ -16,39 +18,40 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class WordService {
 
-    private Logger log = LoggerFactory.getLogger(WordService.class);
-    private List<Word> words = new ArrayList<>();
+    private WordRepository wordRepository;
 
-    WordService() throws IOException {
-        Resource resource = new ClassPathResource("thing-explainer-words-list.txt");
-        BufferedReader reader = new BufferedReader(new FileReader(resource.getFile()));
-        reader.lines().map(Word::new).forEach(words::add);
-        log.info("Created WordService with {} words.", words.size());
+    WordService(WordRepository wordRepository) {
+        this.wordRepository = wordRepository;
     }
 
     public Flux<Word> stream() {
 
         Flux<Long> interval = Flux.interval(Duration.ofSeconds(1));
-        Flux<Word> wordStream = Flux.fromStream(Stream.generate(this::randomWord));
+        Flux<Word> wordStream = all();
 
         return Flux.zip(interval, wordStream).map(Tuple2::getT2);
     }
 
     public Mono<Word> one() {
-        return Mono.just(randomWord());
+        Mono<String> count = count()
+                .map(c -> ThreadLocalRandom.current().nextLong(c))
+                .map(String::valueOf);
+        return wordRepository.findById(count);
+    }
+
+    public Mono<Long> count() {
+        return wordRepository.count();
     }
 
     public Flux<Word> all() {
-        return Flux.fromStream(words.stream());
-    }
-
-    private Word randomWord() {
-        return words.get(new Random().nextInt(words.size()));
+        return wordRepository.findAll();
     }
 }
 

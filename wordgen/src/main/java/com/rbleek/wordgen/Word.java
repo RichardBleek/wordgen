@@ -1,13 +1,23 @@
 package com.rbleek.wordgen;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 class Word {
+
+    @Id
+    private String id;
+
     private String word;
 
-    Word(String word) {
+    public Word(String word) {
         this.word = word;
-    }
-
-    public String getWord() {
-        return word;
     }
 }
