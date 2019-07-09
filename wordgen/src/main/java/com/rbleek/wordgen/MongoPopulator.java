@@ -24,7 +24,7 @@ public class MongoPopulator {
      void populate() {
         wordRepository.deleteAll().subscribe(null, null, () -> {
             Flux<Word> wordFlux = words();
-            wordRepository.insert(wordFlux).subscribe(pword -> log.info("inserted {}", pword));
+            wordRepository.insert(wordFlux).subscribe(pword -> log.debug("inserted {}", pword));
         });
     }
 

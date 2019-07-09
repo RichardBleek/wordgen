@@ -45,6 +45,7 @@ public class WordService {
      * @return a random Word from the mongo db
      */
     public Mono<Word> one() {
+
         Mono<String> randomId = count()
                 .map(c -> ThreadLocalRandom.current().nextLong(c))
                 .map(String::valueOf);
