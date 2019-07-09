@@ -15,18 +15,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class MongoPopulator {
 
+    private WordRepository wordRepository;
+
     public MongoPopulator(WordRepository wordRepository) {
+        this.wordRepository = wordRepository;
+    }
+
+     void populate() {
         wordRepository.deleteAll().subscribe(null, null, () -> {
-            try {
-                AtomicInteger counter = new AtomicInteger(0);
-                Resource resource = new ClassPathResource("thing-explainer-words-list.txt");
-                BufferedReader reader = new BufferedReader(new FileReader(resource.getFile()));
-                Flux<Word> wordFlux = Flux.fromStream(reader.lines()
-                        .map(s -> new Word(String.valueOf(counter.getAndIncrement()), s)));
-                wordRepository.insert(wordFlux).subscribe(pword -> log.info("inserted {}", pword));
-            } catch (IOException e) {
-                log.error(e.getMessage());
-            }
+            Flux<Word> wordFlux = words();
+            wordRepository.insert(wordFlux).subscribe(pword -> log.info("inserted {}", pword));
         });
+    }
+
+     Flux<Word> words() {
+        try {
+            AtomicInteger counter = new AtomicInteger(0);
+            Resource resource = new ClassPathResource("thing-explainer-words-list.txt");
+            BufferedReader reader = new BufferedReader(new FileReader(resource.getFile()));
+            return Flux.fromStream(reader.lines()
+                    .map(s -> new Word(String.valueOf(counter.getAndIncrement()), s)));
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }

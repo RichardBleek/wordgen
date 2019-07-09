@@ -27,8 +27,9 @@ public class WordService {
 
     private WordRepository wordRepository;
 
-    WordService(WordRepository wordRepository) {
+    WordService(WordRepository wordRepository, MongoPopulator mongoPopulator) {
         this.wordRepository = wordRepository;
+        mongoPopulator.populate();
     }
 
     /**
